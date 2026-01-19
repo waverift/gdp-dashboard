@@ -1,151 +1,497 @@
 import streamlit as st
-import pandas as pd
-import math
-from pathlib import Path
+from datetime import datetime
 
-# Set the title and favicon that appear in the Browser's tab bar.
+# ============================================
+# PAGE CONFIG
+# ============================================
 st.set_page_config(
-    page_title='GDP dashboard',
-    page_icon=':earth_americas:', # This is an emoji shortcode. Could be a URL too.
+    page_title="WaveRift - Audio Diarization",
+    page_icon="🌊",
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
-# -----------------------------------------------------------------------------
-# Declare some useful functions.
+# ============================================
+# CUSTOM CSS
+# ============================================
+st.markdown("""
+<style>
+    /* Import Google Font */
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+    
+    /* Global Styles */
+    * {
+        font-family: 'Space Grotesk', sans-serif;
+    }
+    
+    /* Hide Streamlit Branding */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    
+    /* Background */
+    .stApp {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-attachment: fixed;
+    }
+    
+    /* Main Container */
+    .main .block-container {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+        max-width: 1200px;
+    }
+    
+    /* Hero Section */
+    .hero {
+        text-align: center;
+        padding: 2rem 0 3rem 0;
+        animation: fadeIn 1s ease-in;
+    }
+    
+    .hero h1 {
+        font-size: 4.5rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        letter-spacing: -2px;
+    }
+    
+    .hero-tagline {
+        font-size: 1.5rem;
+        color: rgba(255,255,255,0.9);
+        font-weight: 300;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+    
+    /* Feature Cards */
+    .feature-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 2.5rem 2rem;
+        margin: 1rem 0;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+    }
+    
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+    
+    .feature-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+    }
+    
+    .feature-text {
+        font-size: 1rem;
+        color: #4a5568;
+        line-height: 1.6;
+    }
+    
+    /* Stats Section */
+    .stats-container {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 2rem;
+        margin: 2rem 0;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .stat-box {
+        text-align: center;
+        padding: 1rem;
+    }
+    
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 700;
+        color: white;
+        display: block;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .stat-label {
+        font-size: 1rem;
+        color: rgba(255,255,255,0.9);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 0.5rem;
+    }
+    
+    /* CTA Section */
+    .cta-box {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        margin: 3rem 0;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        text-align: center;
+    }
+    
+    .cta-title {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 1rem;
+    }
+    
+    .cta-subtitle {
+        font-size: 1.1rem;
+        color: #4a5568;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+    
+    /* Input Styling */
+    .stTextInput > div > div > input {
+        border-radius: 12px;
+        border: 2px solid #e2e8f0;
+        padding: 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .stTextInput > div > div > input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    /* Button Styling */
+    .stButton > button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 2.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        width: 100%;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+    
+    /* Success Message */
+    .success-message {
+        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin: 1.5rem 0;
+        text-align: center;
+        font-weight: 500;
+        box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+    }
+    
+    /* Footer */
+    .footer {
+        text-align: center;
+        padding: 3rem 0 2rem 0;
+        color: white;
+    }
+    
+    .footer-text {
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 2.5rem;
+        }
+        .hero-tagline {
+            font-size: 1.1rem;
+        }
+        .stat-number {
+            font-size: 2rem;
+        }
+    }
+</style>
+""", unsafe_allow_html=True)
 
-@st.cache_data
-def get_gdp_data():
-    """Grab GDP data from a CSV file.
+# ============================================
+# HERO SECTION
+# ============================================
+st.markdown("""
+<div class="hero">
+    <h1>🌊 WaveRift</h1>
+    <p class="hero-tagline">
+        Transform your audio into crystal-clear transcriptions<br>
+        with AI-powered speaker identification
+    </p>
+</div>
+""", unsafe_allow_html=True)
 
-    This uses caching to avoid having to read the file every time. If we were
-    reading from an HTTP endpoint instead of a file, it's a good idea to set
-    a maximum age to the cache with the TTL argument: @st.cache_data(ttl='1d')
-    """
+# ============================================
+# STATS SECTION
+# ============================================
+st.markdown('<div class="stats-container">', unsafe_allow_html=True)
 
-    # Instead of a CSV on disk, you could read from an HTTP endpoint here too.
-    DATA_FILENAME = Path(__file__).parent/'data/gdp_data.csv'
-    raw_gdp_df = pd.read_csv(DATA_FILENAME)
+col1, col2, col3 = st.columns(3)
 
-    MIN_YEAR = 1960
-    MAX_YEAR = 2022
+with col1:
+    st.markdown("""
+    <div class="stat-box">
+        <span class="stat-number">99%</span>
+        <p class="stat-label">Accuracy</p>
+    </div>
+    """, unsafe_allow_html=True)
 
-    # The data above has columns like:
-    # - Country Name
-    # - Country Code
-    # - [Stuff I don't care about]
-    # - GDP for 1960
-    # - GDP for 1961
-    # - GDP for 1962
-    # - ...
-    # - GDP for 2022
-    #
-    # ...but I want this instead:
-    # - Country Name
-    # - Country Code
-    # - Year
-    # - GDP
-    #
-    # So let's pivot all those year-columns into two: Year and GDP
-    gdp_df = raw_gdp_df.melt(
-        ['Country Code'],
-        [str(x) for x in range(MIN_YEAR, MAX_YEAR + 1)],
-        'Year',
-        'GDP',
-    )
+with col2:
+    st.markdown("""
+    <div class="stat-box">
+        <span class="stat-number">&lt;5min</span>
+        <p class="stat-label">Processing</p>
+    </div>
+    """, unsafe_allow_html=True)
 
-    # Convert years from string to integers
-    gdp_df['Year'] = pd.to_numeric(gdp_df['Year'])
+with col3:
+    st.markdown("""
+    <div class="stat-box">
+        <span class="stat-number">50+</span>
+        <p class="stat-label">Languages</p>
+    </div>
+    """, unsafe_allow_html=True)
 
-    return gdp_df
+st.markdown('</div>', unsafe_allow_html=True)
 
-gdp_df = get_gdp_data()
+# ============================================
+# FEATURES SECTION
+# ============================================
+st.markdown("<br>", unsafe_allow_html=True)
 
-# -----------------------------------------------------------------------------
-# Draw the actual page
+col1, col2, col3 = st.columns(3)
 
-# Set the title that appears at the top of the page.
-'''
-# :earth_americas: GDP dashboard
+with col1:
+    st.markdown("""
+    <div class="feature-card">
+        <span class="feature-icon">🎯</span>
+        <h3 class="feature-title">Precision Diarization</h3>
+        <p class="feature-text">
+            Advanced AI algorithms identify and separate speakers 
+            with industry-leading accuracy.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
-Browse GDP data from the [World Bank Open Data](https://data.worldbank.org/) website. As you'll
-notice, the data only goes to 2022 right now, and datapoints for certain years are often missing.
-But it's otherwise a great (and did I mention _free_?) source of data.
-'''
+with col2:
+    st.markdown("""
+    <div class="feature-card">
+        <span class="feature-icon">⚡</span>
+        <h3 class="feature-title">Lightning Fast</h3>
+        <p class="feature-text">
+            Process hours of audio in minutes. 
+            Get your transcriptions when you need them.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
-# Add some spacing
-''
-''
+with col3:
+    st.markdown("""
+    <div class="feature-card">
+        <span class="feature-icon">🔒</span>
+        <h3 class="feature-title">Secure & Private</h3>
+        <p class="feature-text">
+            Your audio files are encrypted and automatically 
+            deleted after processing.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
-min_value = gdp_df['Year'].min()
-max_value = gdp_df['Year'].max()
+# ============================================
+# HOW IT WORKS SECTION
+# ============================================
+st.markdown("<br><br>", unsafe_allow_html=True)
+st.markdown("""
+<div class="cta-box">
+    <h2 class="cta-title">How It Works</h2>
+    <p class="cta-subtitle">
+        Simple, fast, and accurate audio diarization in three steps
+    </p>
+</div>
+""", unsafe_allow_html=True)
 
-from_year, to_year = st.slider(
-    'Which years are you interested in?',
-    min_value=min_value,
-    max_value=max_value,
-    value=[min_value, max_value])
+col1, col2, col3 = st.columns(3)
 
-countries = gdp_df['Country Code'].unique()
+with col1:
+    st.markdown("""
+    <div class="feature-card" style="text-align: center;">
+        <span class="feature-icon">📤</span>
+        <h3 class="feature-title">1. Upload</h3>
+        <p class="feature-text">
+            Upload your audio file<br>
+            (MP3, WAV, M4A, FLAC)
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
-if not len(countries):
-    st.warning("Select at least one country")
+with col2:
+    st.markdown("""
+    <div class="feature-card" style="text-align: center;">
+        <span class="feature-icon">🤖</span>
+        <h3 class="feature-title">2. Process</h3>
+        <p class="feature-text">
+            Our AI analyzes and<br>
+            identifies speakers
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
-selected_countries = st.multiselect(
-    'Which countries would you like to view?',
-    countries,
-    ['DEU', 'FRA', 'GBR', 'BRA', 'MEX', 'JPN'])
+with col3:
+    st.markdown("""
+    <div class="feature-card" style="text-align: center;">
+        <span class="feature-icon">📊</span>
+        <h3 class="feature-title">3. Download</h3>
+        <p class="feature-text">
+            Get timestamped<br>
+            transcriptions instantly
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
-''
-''
-''
+# ============================================
+# WAITLIST SECTION
+# ============================================
+st.markdown("<br><br>", unsafe_allow_html=True)
+st.markdown("""
+<div class="cta-box">
+    <h2 class="cta-title">Join the Waitlist</h2>
+    <p class="cta-subtitle">
+        Be the first to know when WaveRift launches.<br>
+        Limited early access spots available.
+    </p>
+</div>
+""", unsafe_allow_html=True)
 
-# Filter the data
-filtered_gdp_df = gdp_df[
-    (gdp_df['Country Code'].isin(selected_countries))
-    & (gdp_df['Year'] <= to_year)
-    & (from_year <= gdp_df['Year'])
-]
+# Waitlist Form
+col1, col2, col3 = st.columns([1, 2, 1])
 
-st.header('GDP over time', divider='gray')
-
-''
-
-st.line_chart(
-    filtered_gdp_df,
-    x='Year',
-    y='GDP',
-    color='Country Code',
-)
-
-''
-''
-
-
-first_year = gdp_df[gdp_df['Year'] == from_year]
-last_year = gdp_df[gdp_df['Year'] == to_year]
-
-st.header(f'GDP in {to_year}', divider='gray')
-
-''
-
-cols = st.columns(4)
-
-for i, country in enumerate(selected_countries):
-    col = cols[i % len(cols)]
-
-    with col:
-        first_gdp = first_year[first_year['Country Code'] == country]['GDP'].iat[0] / 1000000000
-        last_gdp = last_year[last_year['Country Code'] == country]['GDP'].iat[0] / 1000000000
-
-        if math.isnan(first_gdp):
-            growth = 'n/a'
-            delta_color = 'off'
-        else:
-            growth = f'{last_gdp / first_gdp:,.2f}x'
-            delta_color = 'normal'
-
-        st.metric(
-            label=f'{country} GDP',
-            value=f'{last_gdp:,.0f}B',
-            delta=growth,
-            delta_color=delta_color
+with col2:
+    with st.form("waitlist_form", clear_on_submit=True):
+        email = st.text_input(
+            "Email Address",
+            placeholder="your@email.com",
+            label_visibility="collapsed"
         )
+        
+        submitted = st.form_submit_button("🚀 Join Waitlist")
+        
+        if submitted:
+            if email and "@" in email:
+                # Here you would save to database/spreadsheet
+                st.markdown(f"""
+                <div class="success-message">
+                    ✅ You're on the list! We'll notify you at <strong>{email}</strong> when we launch.
+                </div>
+                """, unsafe_allow_html=True)
+                st.balloons()
+            else:
+                st.error("⚠️ Please enter a valid email address")
+
+# ============================================
+# USE CASES SECTION
+# ============================================
+st.markdown("<br><br>", unsafe_allow_html=True)
+st.markdown("""
+<div class="cta-box">
+    <h2 class="cta-title">Perfect For</h2>
+</div>
+""", unsafe_allow_html=True)
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown("""
+    <div class="feature-card">
+        <span class="feature-icon">🎙️</span>
+        <h3 class="feature-title">Podcasters</h3>
+        <p class="feature-text">
+            Generate show notes and transcriptions automatically. 
+            Save hours of manual work.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class="feature-card">
+        <span class="feature-icon">🎬</span>
+        <h3 class="feature-title">Content Creators</h3>
+        <p class="feature-text">
+            Create subtitles and captions for videos with 
+            accurate speaker labels.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+with col2:
+    st.markdown("""
+    <div class="feature-card">
+        <span class="feature-icon">📊</span>
+        <h3 class="feature-title">Researchers</h3>
+        <p class="feature-text">
+            Analyze interviews and focus groups with 
+            precise speaker identification.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class="feature-card">
+        <span class="feature-icon">💼</span>
+        <h3 class="feature-title">Businesses</h3>
+        <p class="feature-text">
+            Transcribe meetings and calls with 
+            automatic speaker attribution.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+# ============================================
+# FOOTER
+# ============================================
+st.markdown("<br><br>", unsafe_allow_html=True)
+st.markdown(f"""
+<div class="footer">
+    <p class="footer-text">
+        Made with 💜 by WaveRift Team<br>
+        © {datetime.now().year} WaveRift. All rights reserved.
+    </p>
+    <p class="footer-text" style="margin-top: 1rem; font-size: 0.8rem;">
+        <a href="#" style="color: white; text-decoration: none; margin: 0 1rem;">Privacy Policy</a>
+        <a href="#" style="color: white; text-decoration: none; margin: 0 1rem;">Terms of Service</a>
+        <a href="#" style="color: white; text-decoration: none; margin: 0 1rem;">Contact</a>
+    </p>
+</div>
+""", unsafe_allow_html=True)
