@@ -12,16 +12,16 @@ st.set_page_config(
 )
 
 # ============================================
-# CUSTOM CSS
+# CUSTOM CSS - PROFESSIONAL COLOR SCHEME
 # ============================================
 st.markdown("""
 <style>
     /* Import Google Font */
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     
     /* Global Styles */
     * {
-        font-family: 'Space Grotesk', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     
     /* Hide Streamlit Branding */
@@ -29,9 +29,9 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* Background */
+    /* Background - Professional Dark Blue */
     .stApp {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
         background-attachment: fixed;
     }
     
@@ -52,34 +52,36 @@ st.markdown("""
     .hero h1 {
         font-size: 4.5rem;
         font-weight: 700;
-        color: white;
+        background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
         margin-bottom: 1rem;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         letter-spacing: -2px;
     }
     
     .hero-tagline {
-        font-size: 1.5rem;
-        color: rgba(255,255,255,0.9);
-        font-weight: 300;
+        font-size: 1.4rem;
+        color: #94a3b8;
+        font-weight: 400;
         margin-bottom: 2rem;
         line-height: 1.6;
     }
     
     /* Feature Cards */
     .feature-card {
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 20px;
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        border: 1px solid #334155;
+        border-radius: 16px;
         padding: 2.5rem 2rem;
         margin: 1rem 0;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         transition: all 0.3s ease;
-        border: 1px solid rgba(255,255,255,0.2);
     }
     
     .feature-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+        border-color: #3b82f6;
+        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
     }
     
     .feature-icon {
@@ -89,26 +91,26 @@ st.markdown("""
     }
     
     .feature-title {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
         font-weight: 600;
-        color: #2d3748;
-        margin-bottom: 0.5rem;
+        color: #f1f5f9;
+        margin-bottom: 0.75rem;
     }
     
     .feature-text {
         font-size: 1rem;
-        color: #4a5568;
+        color: #94a3b8;
         line-height: 1.6;
     }
     
     /* Stats Section */
     .stats-container {
-        background: rgba(255,255,255,0.15);
+        background: rgba(30, 41, 59, 0.5);
         backdrop-filter: blur(10px);
-        border-radius: 20px;
-        padding: 2rem;
+        border: 1px solid #334155;
+        border-radius: 16px;
+        padding: 2.5rem 2rem;
         margin: 2rem 0;
-        border: 1px solid rgba(255,255,255,0.2);
     }
     
     .stat-box {
@@ -119,99 +121,154 @@ st.markdown("""
     .stat-number {
         font-size: 3rem;
         font-weight: 700;
-        color: white;
+        background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
         display: block;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
     }
     
     .stat-label {
-        font-size: 1rem;
-        color: rgba(255,255,255,0.9);
+        font-size: 0.95rem;
+        color: #cbd5e1;
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: 1.5px;
         margin-top: 0.5rem;
+        font-weight: 500;
     }
     
     /* CTA Section */
     .cta-box {
-        background: white;
-        border-radius: 20px;
-        padding: 3rem;
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        border: 1px solid #334155;
+        border-radius: 16px;
+        padding: 3rem 2.5rem;
         margin: 3rem 0;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         text-align: center;
     }
     
     .cta-title {
-        font-size: 2rem;
-        font-weight: 600;
-        color: #2d3748;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #f1f5f9;
         margin-bottom: 1rem;
     }
     
     .cta-subtitle {
-        font-size: 1.1rem;
-        color: #4a5568;
+        font-size: 1.15rem;
+        color: #94a3b8;
         margin-bottom: 2rem;
-        line-height: 1.6;
+        line-height: 1.7;
+    }
+    
+    /* Section Title */
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #f1f5f9;
+        text-align: center;
+        margin: 3rem 0 2rem 0;
     }
     
     /* Input Styling */
     .stTextInput > div > div > input {
-        border-radius: 12px;
-        border: 2px solid #e2e8f0;
-        padding: 1rem;
+        border-radius: 10px;
+        border: 1px solid #334155;
+        background: #1e293b;
+        color: #f1f5f9;
+        padding: 1rem 1.25rem;
         font-size: 1rem;
         transition: all 0.3s ease;
     }
     
     .stTextInput > div > div > input:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        border-color: #3b82f6;
+        background: #0f172a;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+    
+    .stTextInput > div > div > input::placeholder {
+        color: #64748b;
     }
     
     /* Button Styling */
     .stButton > button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         color: white;
         border: none;
-        border-radius: 12px;
-        padding: 0.75rem 2.5rem;
-        font-size: 1.1rem;
+        border-radius: 10px;
+        padding: 0.875rem 2.5rem;
+        font-size: 1.05rem;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
         width: 100%;
     }
     
     .stButton > button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        box-shadow: 0 6px 25px rgba(59, 130, 246, 0.5);
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
     }
     
     /* Success Message */
     .success-message {
-        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         color: white;
         padding: 1.5rem;
-        border-radius: 12px;
+        border-radius: 10px;
         margin: 1.5rem 0;
         text-align: center;
         font-weight: 500;
-        box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+    
+    /* Contact Info */
+    .contact-info {
+        background: rgba(30, 41, 59, 0.5);
+        border: 1px solid #334155;
+        border-radius: 10px;
+        padding: 1.25rem 1.75rem;
+        margin: 2rem auto;
+        max-width: 400px;
+        text-align: center;
+    }
+    
+    .contact-email {
+        color: #60a5fa;
+        font-size: 1.1rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    
+    .contact-email:hover {
+        color: #93c5fd;
     }
     
     /* Footer */
     .footer {
         text-align: center;
         padding: 3rem 0 2rem 0;
-        color: white;
+        border-top: 1px solid #334155;
+        margin-top: 4rem;
     }
     
     .footer-text {
         font-size: 0.9rem;
-        opacity: 0.8;
+        color: #64748b;
+    }
+    
+    .footer-links a {
+        color: #94a3b8;
+        text-decoration: none;
+        margin: 0 1rem;
+        transition: color 0.3s ease;
+    }
+    
+    .footer-links a:hover {
+        color: #60a5fa;
     }
     
     /* Animations */
@@ -235,7 +292,10 @@ st.markdown("""
             font-size: 1.1rem;
         }
         .stat-number {
-            font-size: 2rem;
+            font-size: 2.2rem;
+        }
+        .cta-title, .section-title {
+            font-size: 1.8rem;
         }
     }
 </style>
@@ -290,7 +350,7 @@ st.markdown('</div>', unsafe_allow_html=True)
 # ============================================
 # FEATURES SECTION
 # ============================================
-st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("<br><br>", unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns(3)
 
@@ -334,13 +394,11 @@ with col3:
 # HOW IT WORKS SECTION
 # ============================================
 st.markdown("<br><br>", unsafe_allow_html=True)
+st.markdown('<h2 class="section-title">How It Works</h2>', unsafe_allow_html=True)
 st.markdown("""
-<div class="cta-box">
-    <h2 class="cta-title">How It Works</h2>
-    <p class="cta-subtitle">
-        Simple, fast, and accurate audio diarization in three steps
-    </p>
-</div>
+<p style="text-align: center; color: #94a3b8; font-size: 1.1rem; margin-bottom: 2rem;">
+    Simple, fast, and accurate audio diarization in three steps
+</p>
 """, unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns(3)
@@ -424,11 +482,8 @@ with col2:
 # USE CASES SECTION
 # ============================================
 st.markdown("<br><br>", unsafe_allow_html=True)
-st.markdown("""
-<div class="cta-box">
-    <h2 class="cta-title">Perfect For</h2>
-</div>
-""", unsafe_allow_html=True)
+st.markdown('<h2 class="section-title">Perfect For</h2>', unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
 
@@ -479,19 +534,31 @@ with col2:
     """, unsafe_allow_html=True)
 
 # ============================================
-# FOOTER
+# CONTACT SECTION
 # ============================================
 st.markdown("<br><br>", unsafe_allow_html=True)
+st.markdown("""
+<div class="contact-info">
+    <p style="color: #94a3b8; margin-bottom: 0.5rem; font-size: 0.9rem;">Get in touch</p>
+    <a href="mailto:hello@waverift.io" class="contact-email">hello@waverift.io</a>
+</div>
+""", unsafe_allow_html=True)
+
+# ============================================
+# FOOTER
+# ============================================
 st.markdown(f"""
 <div class="footer">
     <p class="footer-text">
-        Made with 💜 by WaveRift Team<br>
+        Made with 💙 by WaveRift Team
+    </p>
+    <p class="footer-text" style="margin-top: 0.5rem;">
         © {datetime.now().year} WaveRift. All rights reserved.
     </p>
-    <p class="footer-text" style="margin-top: 1rem; font-size: 0.8rem;">
-        <a href="#" style="color: white; text-decoration: none; margin: 0 1rem;">Privacy Policy</a>
-        <a href="#" style="color: white; text-decoration: none; margin: 0 1rem;">Terms of Service</a>
-        <a href="#" style="color: white; text-decoration: none; margin: 0 1rem;">Contact</a>
-    </p>
+    <div class="footer-links" style="margin-top: 1.5rem;">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="mailto:hello@waverift.io">Contact</a>
+    </div>
 </div>
 """, unsafe_allow_html=True)
